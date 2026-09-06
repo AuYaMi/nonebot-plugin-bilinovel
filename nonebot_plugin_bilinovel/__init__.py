@@ -5,5 +5,6 @@ __plugin_meta__ = PluginMetadata(
     name="哔哩轻小说爬虫",
     description="搜索并下载哔哩轻小说，生成EPUB电子书",
     usage="/sear 小说名",
+    type="application",  # ⬅️ 加上这一行即可
     supported_adapters={"~onebot.v11"},
 )

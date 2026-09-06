@@ -1,6 +1,6 @@
 [project]
 name = "nonebot-plugin-bilinovel"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
     { name = "AuYaMi", email = "SIX18318463527@163.com" }
 ]
@@ -27,5 +27,4 @@ adapters = [
     { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
 ]
 plugins = ["nonebot_plugin_bilinovel"]
-# 新增这一行，自定义环境变量白名单
 env_startswith = ["WORKER_", "BROWSER_", "TEMP_"]
