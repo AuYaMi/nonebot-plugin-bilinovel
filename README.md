@@ -29,8 +29,6 @@ playwright install chromium
 - `< >` 必填参数，不可省略
 - `[ ]` 可选参数，可以省略
 
-表格
-
 | 指令 | 语法 | 说明 |
 | --- | --- | --- |
 | `/sear` | `/sear <小说名称>` | 搜索哔哩轻小说，返回书本 id |
@@ -39,11 +37,29 @@ playwright install chromium
 > 搜索示例：`/sear 关于我转生变成史莱姆这档事`
 >           `/sear 游戏人生`
 >
-> 
 > 下载示例：`/down 9 1 epub` 即下载书籍 id 为 9 的第一卷，导出格式为 epub
 >
-> 
 > [下载格式不填默认txt]
+
+## 📸 运行效果
+
+### 搜索小说
+
+发送 `/sear 魔法禁书` 搜索小说：
+
+![搜索效果](assets/sear.png)
+
+### 下载 TXT
+
+发送 `/down 4187 1` 下载第一卷 TXT 格式：
+
+![下载TXT](assets/down_txt.png)
+
+### 下载 EPUB
+
+发送 `/down 4187 1 epub` 下载第一卷 EPUB 格式：
+
+![下载EPUB](assets/down_epub.png)
 
 ## ⚙️ .env自定义参数配置
 
