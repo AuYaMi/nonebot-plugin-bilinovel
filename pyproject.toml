@@ -17,6 +17,9 @@ dependencies = [
     "playwright",
     "ebooklib"
 ]
+[project.urls]
+Homepage = "https://github.com/AuYaMi/nonebot_plugin_bilinovel"
+Repository = "https://github.com/AuYaMi/nonebot_plugin_bilinovel"
 [project.entry-points."nonebot.plugins"]
 nonebot-plugin-bilinovel = "nonebot_plugin_bilinovel"
 [build-system]
