@@ -4,32 +4,42 @@ from pathlib import Path
 from nonebot import get_driver
 
 driver = get_driver()
-cfg = driver.config
+
+ROOT = Path(__file__).parent.parent
+env_file_path = ROOT / ".env"
+
+# 手动解析 .env 文件，自己读取键值对
+env_config = {}
+if env_file_path.exists():
+    with open(env_file_path, "r", encoding="utf‑8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            key, value = line.split("=", 1)
+            env_config[key.strip()] = value.strip()
+
 
 task_queue: asyncio.Queue = asyncio.Queue(maxsize=30)
 END_SENTINEL = None
-ROOT = Path(__file__).parent.parent
 OUTPUT_FOLDER = ROOT / "shared_output"
 OUTPUT_FOLDER.mkdir(exist_ok=True)
 BASE_URL = "https://w.linovelib.com"
 
 
 def get_worker_count() -> int:
-    val = getattr(cfg, "worker_count", 2)
+    val = env_config.get("WORKER_COUNT", "2")
     return int(val)
 
 
 def get_browser_headless() -> bool:
-    val = getattr(cfg, "browser_headless", True)
-    if isinstance(val, str):
-        val = val.strip().lower()
-        return val in ("true", "1", "yes", "on")
-    return bool(val)
+    val = env_config.get("BROWSER_HEADLESS", "True").strip().lower()
+    return val in ("true", "1", "yes", "on")
 
 
 def get_temp_json_path() -> Path:
-    val = getattr(cfg, "temp_json", "./output/chap_temp.json")
-    return Path(val)
+    val = env_config.get("TEMP_JSON", "./output/chap_temp.json")
+    return Path(val).resolve()
 
 
 @driver.on_startup
@@ -41,11 +51,6 @@ def print_config_info():
     print(f"  BROWSER_HEADLESS = {h}, type:{type(h)}")
     print(f"  WORKER_COUNT      = {w}")
     print(f"  TEMP_JSON_PATH    = {t}")
-
-
-
-
-
 
 
 
