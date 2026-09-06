@@ -1,0 +1,29 @@
+[project]
+name = "nonebot-plugin-bilinovel"
+version = "0.1.0"
+authors = [
+    { name = "AuYaMi", email = "SIX18318463527@163.com" }
+]
+description = "NoneBot2 哔哩轻小说下载爬虫插件"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "nonebot2>=2.5.0",
+    "nonebot-adapter-onebot>=2.4.6",
+    "aiohttp",
+    "lxml",
+    "loguru",
+    "playwright",
+    "ebooklib"
+]
+[project.entry-points."nonebot.plugins"]
+nonebot-plugin-bilinovel = "nonebot_plugin_bilinovel"
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+[tool.nonebot]
+adapters = [
+    { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
+]
+plugins = ["nonebot_plugin_bilinovel"]
