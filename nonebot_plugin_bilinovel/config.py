@@ -38,8 +38,7 @@ def get_browser_headless() -> bool:
 
 
 def get_temp_json_path() -> Path:
-    val = env_config.get("TEMP_JSON", "./output/chap_temp.json")
-    return Path(val).resolve()
+    return OUTPUT_FOLDER / "chap_temp.json"
 
 
 @driver.on_startup

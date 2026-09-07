@@ -246,10 +246,10 @@ async def worker_txt(worker_id: int, save_path: str, file_lock: asyncio.Lock):
     await asyncio.sleep(init_delay)
     async with async_playwright() as p:
         headless_flag = config.get_browser_headless()
-        logger.info(f"[Worker调试] headless_flag = {headless_flag}, type:{type(headless_flag)}")
         if headless_flag:
             launch_args = {
-                "headless": True,
+                "headless": headless_flag,
+                "channel": "chrome",
                 "args": ["--no-sandbox", "--disable-gpu"]
             }
         else:
@@ -299,10 +299,10 @@ async def worker_epub(worker_id: int, file_lock: asyncio.Lock):
     await asyncio.sleep(init_delay)
     async with async_playwright() as p:
         headless_flag = config.get_browser_headless()
-        logger.info(f"[Worker调试] headless_flag = {headless_flag}, type:{type(headless_flag)}")
         if headless_flag:
             launch_args = {
-                "headless": True,
+                "headless": headless_flag,
+                "channel": "chrome",
                 "args": ["--no-sandbox", "--disable-gpu"]
             }
         else:
