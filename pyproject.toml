@@ -25,6 +25,9 @@ nonebot-plugin-bilinovel = "nonebot_plugin_bilinovel"
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+[tool.setuptools.packages.find]
+include = ["nonebot_plugin_bilinovel*"]
+
 [tool.nonebot]
 adapters = [
     { name = "OneBot V11", module_name = "nonebot.adapters.onebot.v11" }
