@@ -135,6 +135,11 @@ async def crawl_chapter_epub(page, first_page_url, load_image=True):
     res = await get_filtered_text(page, first_page_url, load_image=True)
     if res["hasText"]:
         full_text += res["content"] + "\n\n\n"
+        # 移除 Cloudflare 广告弹窗等覆盖层，避免遮挡插图截图
+        await page.evaluate("""() => {
+            document.querySelectorAll('iframe[src*="challenges"], iframe[src*="turnstile"], iframe[src*="cloudflare"]').forEach(e => e.remove());
+            document.querySelectorAll('[class*="modal"], [class*="overlay"], [class*="popup"], [id*="challenge"], [id*="turnstile"]').forEach(e => e.remove());
+        }""")
         img_locators = page.locator('//div[@class="TextContent"]/img[not(ancestor::center/ruby)]')
         img_count = await img_locators.count()
         for i in range(img_count):
