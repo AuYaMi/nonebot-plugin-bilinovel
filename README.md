@@ -2,16 +2,9 @@
 
 > NoneBot2 哔哩轻小说爬虫插件，搜索小说并下载生成 EPUB 电子书
 
-## 📦 安装
+##  安装
 
-### 方式一：使用 nb‑cli
-
-
-```bash
-nb plugin install nonebot-plugin-bilinovel
-```
-
-### 方式二：pip 安装插件
+### pip 安装
 ```bash
 pip install nonebot-plugin-bilinovel
 ```
@@ -68,7 +61,7 @@ playwright install chromium
 
 ```
 # Playwright浏览器无头开关，True：无头 /False：有头
-BROWSER_HEADLESS = True  #无头情况下epub模式可能获取不到图片
+BROWSER_HEADLESS = True
 # 章节并发数，并发多容易限流
 WORKER_COUNT = 2
 ```
@@ -86,8 +79,14 @@ WORKER_COUNT = 2
 
 ## 📝 更新日志
 
-### v0.1.0
+### v0.1.3
 
-- 基础小说搜索功能
-- 小说章节错峰并发爬取
-- EPUB 电子书导出
+- 无头模式改用本地 Chrome 渲染，修复 EPUB 模式下插画检测不到的问题
+- 修复临时文件路径，避免目录不存在导致崩溃
+- 添加下载完整性校验：缓存文件章节数不匹配时自动重新下载
+- TXT 下载使用临时文件，下载完成后重命名，防止中断留下半成品
+
+### v0.1.2
+
+- 添加项目主页链接，修复 NoneBot 商店发布检查问题
+- README 添加运行效果截图
