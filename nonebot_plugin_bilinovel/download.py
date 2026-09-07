@@ -18,6 +18,23 @@ async def get_url(session, url):
         return await resp.text(encoding='utf-8')
 
 
+# 移除广告弹窗，避免遮挡插图截图
+async def remove_ad_popup(page):
+    """移除所有可能的广告弹窗和覆盖层"""
+    await page.evaluate("""() => {
+        // 移除 fc-monetization 弹窗（哔哩轻小说的广告解锁弹窗）
+        document.querySelectorAll('div.fc-monetization-dialog, div.fc-monetization-dialog.fc-dialog').forEach(e => e.remove());
+        // 移除 Cloudflare 相关 iframe
+        document.querySelectorAll('iframe[src*="challenges"], iframe[src*="turnstile"], iframe[src*="cloudflare"]').forEach(e => e.remove());
+        // 移除其他常见的弹窗/覆盖层
+        document.querySelectorAll('[class*="modal"], [class*="overlay"], [class*="popup"], [id*="challenge"], [id*="turnstile"]').forEach(e => e.remove());
+        // 移除可能的背景遮罩
+        document.querySelectorAll('div[style*="position: fixed"], div[style*="position:fixed"]').forEach(e => {
+            if (e.style.zIndex > 1000) e.remove();
+        });
+    }""")
+
+
 async def get_filtered_text(page, url, load_image: bool = False):
     await page.goto(
         url,
@@ -27,16 +44,10 @@ async def get_filtered_text(page, url, load_image: bool = False):
     await page.wait_for_timeout(3000)
     page_html = await page.content()
     if "Sorry, you have been blocked" in page_html:
-        logger.error("❌ 当前IP触发Cloudflare封禁！任务终止")
+        logger.error(" 当前IP触发Cloudflare封禁！任务终止")
         raise Exception("CLOUDFLARE_BLOCKED")
     await page.wait_for_selector('//div[@class="TextContent"]', timeout=25000, state="visible")
-    # 删除解锁广告弹窗，两边模式都需要
-    await page.evaluate("""
-    const ad = document.querySelector('div.fc-monetization-dialog.fc-dialog');
-    if(ad){
-        ad.remove();
-    }
-    """)
+    await remove_ad_popup(page)
     # 只有EPUB插图模式才执行滚动+延时
     if load_image:
         await page.evaluate("window.scrollTo({top: document.body.scrollHeight, behavior:'instant'})")
@@ -135,11 +146,6 @@ async def crawl_chapter_epub(page, first_page_url, load_image=True):
     res = await get_filtered_text(page, first_page_url, load_image=True)
     if res["hasText"]:
         full_text += res["content"] + "\n\n\n"
-        # 移除 Cloudflare 广告弹窗等覆盖层，避免遮挡插图截图
-        await page.evaluate("""() => {
-            document.querySelectorAll('iframe[src*="challenges"], iframe[src*="turnstile"], iframe[src*="cloudflare"]').forEach(e => e.remove());
-            document.querySelectorAll('[class*="modal"], [class*="overlay"], [class*="popup"], [id*="challenge"], [id*="turnstile"]').forEach(e => e.remove());
-        }""")
         img_locators = page.locator('//div[@class="TextContent"]/img[not(ancestor::center/ruby)]')
         img_count = await img_locators.count()
         for i in range(img_count):
@@ -147,6 +153,8 @@ async def crawl_chapter_epub(page, first_page_url, load_image=True):
             try:
                 await loc.scroll_into_view_if_needed(timeout=8000)
                 await page.wait_for_timeout(2000)
+                # 截图前移除广告弹窗（可能在滚动后才出现）
+                await remove_ad_popup(page)
                 pic_bytes = await loc.screenshot()
                 b64_str = base64.b64encode(pic_bytes).decode("utf‑8")
                 all_img_base64.append(b64_str)
@@ -175,6 +183,8 @@ async def crawl_chapter_epub(page, first_page_url, load_image=True):
             try:
                 await loc.scroll_into_view_if_needed(timeout=8000)
                 await page.wait_for_timeout(600)
+                # 截图前移除广告弹窗
+                await remove_ad_popup(page)
                 pic_bytes = await loc.screenshot()
                 b64_str = base64.b64encode(pic_bytes).decode("utf‑8")
                 all_img_base64.append(b64_str)
